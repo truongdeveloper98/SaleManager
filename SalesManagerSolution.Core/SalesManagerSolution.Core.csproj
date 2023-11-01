@@ -7,13 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="7.0.13" />
+    <Compile Remove="Configuration\**" />
+    <Compile Remove="Utilities\**" />
+    <EmbeddedResource Remove="Configuration\**" />
+    <EmbeddedResource Remove="Utilities\**" />
+    <None Remove="Configuration\**" />
+    <None Remove="Utilities\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Configuration\" />
-    <Folder Include="Utilities\" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="7.0.13" />
   </ItemGroup>
 
   <ItemGroup>

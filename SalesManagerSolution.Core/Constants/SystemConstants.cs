@@ -13,8 +13,7 @@ namespace SalesManagerSolution.Core.Constants
 		{
 			public const string Token = "Token";
 			public const string TokenUser = "TokenUser";
-			public const string BaseAddress = "https://localhost:7119";
-
+			public const string BaseAddress = "BaseAddress";
 		}
 	}
 }

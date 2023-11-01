@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SalesManagerSolution.AdminApp.Models;
 using System.Diagnostics;
 
 namespace SalesManagerSolution.AdminApp.Controllers
 {
+	[Authorize]
 	public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
