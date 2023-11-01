@@ -1,0 +1,57 @@
+﻿
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Login";
+}
+
+<div class="position-relative z-index-2">
+	<!--begin::Container-->
+	<div class="container">
+		<!--begin::Card-->
+		<div class="card mt-7" id="card-register" data-kt-scroll-offset="85" style="filter: drop-shadow(0px 0px 40px rgba(68, 81, 96, 0.08))">
+			<!--begin::Card body-->
+			<div class="card-body">
+				<!--begin::Heading-->
+				<div class="text-center mb-5 mb-lg-10">
+					<!--begin::Title-->
+					<h3 class="fs-2hx text-dark mb-5" id="portfolio" data-kt-scroll-offset="{default: 100, lg: 150}">Login</h3>
+					<!--end::Title-->
+				</div>
+				<!--end::Heading-->
+				<!--begin::Tabs content-->
+				<div class="row">
+					<div class="col-md-3"></div>
+					<div class="col-md-6" id="email-content">
+						<form id="login-form">
+							<div class="mb-3">
+								<label  class="form-label">Email</label>
+								<input type="text" class="form-control" id="email"  name="email" placeholder="Enter email" value="@ViewBag.Email">
+							</div>
+                            <div class="mb-3">
+								<label  class="form-label">Password</label>
+								<input type="password" class="form-control" id="password" name="password" a placeholder="Enter password">
+							</div>
+							<div class="row">
+								<div class="col-md-12" align="center">
+									<button id="login-submit" type="button" class="btn btn-primary mt-5" onclick="SubmitLogin()">Login</button>
+								</div>
+							</div>
+						</form>
+
+						
+					</div>
+				</div>	
+				<!--end::Tabs content-->
+			</div>
+			<!--end::Card body-->
+		</div>
+		<!--end::Card-->
+					
+	</div>
+	<!--end::Container-->
+</div>
+@section Scripts {
+	<script src="~/js/login.js"></script>
+	<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/additional-methods.js"></script>
+	@*@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}*@
+}
