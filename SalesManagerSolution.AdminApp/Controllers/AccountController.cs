@@ -52,7 +52,13 @@ namespace SalesManagerSolution.AdminApp.Controllers
 				ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
 				IsPersistent = false
 			};
-			return View();
+
+			await HttpContext.SignInAsync(
+					   CookieAuthenticationDefaults.AuthenticationScheme,
+					   userPrincipal,
+					   authProperties);
+
+			return RedirectToAction("Index", "Home");
 		}
 
 		private ClaimsPrincipal ValidateToken(string jwtToken)
@@ -64,9 +70,9 @@ namespace SalesManagerSolution.AdminApp.Controllers
 
 			validationParameters.ValidateLifetime = true;
 
-			validationParameters.ValidAudience = _configuration["Tokens:Issuer"];
-			validationParameters.ValidIssuer = _configuration["Tokens:Issuer"];
-			validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Tokens:Key"]));
+			validationParameters.ValidAudience = _configuration["JwtSettings:Issuer"];
+			validationParameters.ValidIssuer = _configuration["JwtSettings:Issuer"];
+			validationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Secret"]));
 
 			ClaimsPrincipal principal = new JwtSecurityTokenHandler().ValidateToken(jwtToken, validationParameters, out validatedToken);
 

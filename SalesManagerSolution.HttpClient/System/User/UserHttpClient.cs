@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using SalesManagerSolution.Core.Constants;
 using SalesManagerSolution.Core.ViewModels.RequestViewModels.Authentications;
+using SalesManagerSolution.Core.ViewModels.ResponseViewModels.Authentications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,9 +36,12 @@ namespace SalesManagerSolution.HttpClient.System.User
 			var client = _httpClientFactory.CreateClient();
 			client.BaseAddress = new Uri(_configuration[SystemConstants.AppSettings.BaseAddress]);
 			var response = await client.PostAsync("/api/Authentications/Login", httpContent);
+
 			if (response.IsSuccessStatusCode)
 			{
-				return JsonConvert.DeserializeObject<ApiSuccessResult<string>>(await response.Content.ReadAsStringAsync()) ?? new ApiSuccessResult<string>( string.Empty);
+				var token =  JsonConvert.DeserializeObject<AuthenticationResponseViewModel>(await response.Content.ReadAsStringAsync());
+
+				return new ApiSuccessResult<string>(token.Token);
 			}
 
 			return JsonConvert.DeserializeObject<ApiErrorResult<string>>(await response.Content.ReadAsStringAsync()) ?? new ApiErrorResult<string>(string.Empty);

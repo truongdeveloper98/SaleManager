@@ -7,7 +7,7 @@
         public decimal Price { set; get; }
 
         public int UserId { get; set; }
-
+        public int TestId { get; set; }
         public Product Product { get; set; } = default!;
 
         public DateTime DateCreated { get; set; }
