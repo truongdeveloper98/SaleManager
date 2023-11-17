@@ -1,4 +1,4 @@
-﻿using eShopSolution.ViewModels.Common;
+﻿using SalesManagerSolution.Core.ViewModels.Common;
 using SalesManagerSolution.Core.ViewModels.RequestViewModels.Products;
 using SalesManagerSolution.Core.ViewModels.ResponseViewModels.Products;
 using SalesManagerSolution.Domain.Entities;

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using SalesManagerSolution.Core.Constants;
 using SalesManagerSolution.Core.ViewModels.RequestViewModels.Authentications;
 using SalesManagerSolution.HttpClient.System.User;
 using System.IdentityModel.Tokens.Jwt;
@@ -53,7 +54,9 @@ namespace SalesManagerSolution.AdminApp.Controllers
 				IsPersistent = false
 			};
 
-			await HttpContext.SignInAsync(
+            Set(SystemConstants.AppSettings.Token, result.ResultObj, 10);
+
+            await HttpContext.SignInAsync(
 					   CookieAuthenticationDefaults.AuthenticationScheme,
 					   userPrincipal,
 					   authProperties);
@@ -78,10 +81,17 @@ namespace SalesManagerSolution.AdminApp.Controllers
 
 			return principal;
 		}
-		//[HttpPost]
-		//public IActionResult Login()
-		//{
-		//	return View(1);
-		//}
-	}
+
+        public void Set(string key, string value, int? expireTime)
+        {
+            CookieOptions option = new CookieOptions();
+
+            if (expireTime.HasValue)
+                option.Expires = DateTime.Now.AddMinutes(expireTime.Value);
+            else
+                option.Expires = DateTime.Now.AddMilliseconds(10);
+
+            Response.Cookies.Append(key, value, option);
+        }
+    }
 }

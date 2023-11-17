@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using SalesManagerSolution.HttpClient;
 using SalesManagerSolution.HttpClient.System.User;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +20,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddScoped<IUserHttpClient, UserHttpClient>();
+builder.Services.AddScoped<IProductApiClient, ProductApiClient>();
 
 
 var app = builder.Build();

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SalesManagerSolution.Core.Interfaces.Services.Products;
 using SalesManagerSolution.Core.ViewModels.RequestViewModels.Products;
+using SalesManagerSolution.Core.ViewModels.ResponseViewModels.Products;
 
 namespace SalesManagerSolution.WebApi.Controllers
 {
@@ -19,7 +20,14 @@ namespace SalesManagerSolution.WebApi.Controllers
 			_productService = productService;
 		}
 
-		[HttpPost("Create")]		
+        [HttpGet("paging")]
+        public async Task<IActionResult> GetAllPaging([FromQuery] ProductPagingViewModel request)
+        {
+            var products = await _productService.GetAllPaging(request);
+            return Ok(products);
+        }
+
+        [HttpPost("Create")]		
 		public async Task<IActionResult> CreateProduct(ProductCreateViewModel model)
 		{
 			if (!ModelState.IsValid)

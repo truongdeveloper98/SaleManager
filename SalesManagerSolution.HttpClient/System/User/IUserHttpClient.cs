@@ -1,4 +1,4 @@
-﻿using eShopSolution.ViewModels.Common;
+﻿using SalesManagerSolution.Core.ViewModels.Common;
 using SalesManagerSolution.Core.ViewModels.RequestViewModels.Authentications;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿using eShopSolution.ViewModels.Common;
+﻿using SalesManagerSolution.Core.ViewModels.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
