@@ -6,22 +6,30 @@ using SalesManagerSolution.Infrastructure.EntityFramework;
 using SalesManagerSolution.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using static System.Net.Mime.MediaTypeNames;
+using SalesManagerSolution.Core.Interfaces.Common;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http.Headers;
 
 namespace SalesManagerSolution.Infrastructure.Services.Products
 {
 	public class ProductService : IProductService
 	{
 		private readonly ApplicationDbContext _context;
+        private readonly IStorageService _storageService;
+        private const string USER_CONTENT_FOLDER_NAME = "user-content";
 
-		public ProductService(ApplicationDbContext context)
+        public ProductService(ApplicationDbContext context, IStorageService storageService)
 		{
 			_context = context;
+			_storageService = storageService;
 		}
 
-		public Task AddViewcount(int productId)
+		public async Task AddViewcount(int productId)
 		{
-			throw new NotImplementedException();
-		}
+            var product = await _context.Products.FindAsync(productId);
+            product.ViewCount += 1;
+            await _context.SaveChangesAsync();
+        }
 
 		public async Task<int> Create(ProductCreateViewModel request)
 		{
@@ -37,14 +45,46 @@ namespace SalesManagerSolution.Infrastructure.Services.Products
 				ViewCount = 0
 			};
 
-			_context.Products.Add(product);
+            //Save image
+            if (request.ThumbnailImage != null)
+            {
+                try
+                {
+                    product.ProductImages = new List<ProductImage>()
+                {
+                    new ProductImage()
+                    {
+                        Caption = "Thumbnail image",
+                        DateCreated = DateTime.Now,
+                        FileSize = request.ThumbnailImage.Length,
+                        ImagePath = await this.SaveFile(request.ThumbnailImage),
+                        IsDefault = true,
+                        SortOrder = 1
+                    }
+                };
+                }
+                catch(Exception  ex)
+                {
+
+                }
+            }
+
+            _context.Products.Add(product);
 
 			await _context.SaveChangesAsync();
 
 			return product.Id;	
 		}
 
-		public Task<int> Delete(int productId)
+        private async Task<string> SaveFile(IFormFile file)
+        {
+            var originalFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(originalFileName)}";
+            await _storageService.SaveFileAsync(file.OpenReadStream(), fileName);
+            return "/" + USER_CONTENT_FOLDER_NAME + "/" + fileName;
+        }
+
+        public Task<int> Delete(int productId)
 		{
 			throw new NotImplementedException();
 		}

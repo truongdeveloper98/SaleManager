@@ -4,11 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SalesManagerSolution.Core.Constants;
 using SalesManagerSolution.Core.Interfaces.Authentications;
+using SalesManagerSolution.Core.Interfaces.Common;
 using SalesManagerSolution.Core.Interfaces.Services.Products;
 using SalesManagerSolution.Core.Services.Authentications;
 using SalesManagerSolution.Domain.Entities;
 using SalesManagerSolution.Infrastructure.EntityFramework;
 using SalesManagerSolution.Infrastructure.Services.Authentications;
+using SalesManagerSolution.Infrastructure.Services.Common;
 using SalesManagerSolution.Infrastructure.Services.Products;
 
 namespace SalesManagerSolution.WebApi.DI
@@ -37,6 +39,7 @@ namespace SalesManagerSolution.WebApi.DI
 
 			//builder.Services DI
 			services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionsName));
+			services.AddScoped<IStorageService, FileStorageService>();
 			services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 			services.AddScoped<IAuthenticationService, AuthenticationService>();
 			services.AddScoped<IProductService, ProductService>();

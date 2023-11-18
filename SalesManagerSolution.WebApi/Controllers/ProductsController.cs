@@ -27,25 +27,26 @@ namespace SalesManagerSolution.WebApi.Controllers
             return Ok(products);
         }
 
-        [HttpPost("Create")]		
-		public async Task<IActionResult> CreateProduct(ProductCreateViewModel model)
-		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
 
-			var productId = await _productService.Create(model);
+        [HttpPost]
+        [Consumes("multipart/form-data")]
+        [Authorize]
+        public async Task<IActionResult> Create([FromForm] ProductCreateViewModel request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var productId = await _productService.Create(request);
+            if (productId == 0)
+                return BadRequest();
 
-			if (productId == 0)
-				return BadRequest();
+            var product = await _productService.GetById(productId);
 
-			var product = await _productService.GetById(productId);
+            return CreatedAtAction(nameof(GetById), new { id = productId }, product);
+        }
 
-			return CreatedAtAction(nameof(GetById), new { id = productId }, product);
-		}
-
-		[HttpGet("{productId}")]
+        [HttpGet("{productId}")]
 		public async Task<IActionResult> GetById(int productId)
 		{
 			var product = await _productService.GetById(productId);
