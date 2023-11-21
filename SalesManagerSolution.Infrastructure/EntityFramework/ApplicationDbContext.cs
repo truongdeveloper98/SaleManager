@@ -164,10 +164,51 @@ namespace SalesManagerSolution.Infrastructure.EntityFramework
 					RoleId = 2,
 					UserId = 2
 				});
-			#endregion
-		}
+            #endregion
 
-		public override int SaveChanges()
+            #region Seed data for category
+            builder.Entity<Category>().HasData(
+                new Category
+                {
+					Id = 1,
+                    Name = "Women",
+					Description = "Women",
+					IsShowOnHome = true,
+					SortOrder = 1
+                });
+
+            builder.Entity<Category>().HasData(
+                new Category
+                {
+                    Id = 2,
+                    Name = "Men",
+                    Description = "Men",
+                    IsShowOnHome = true,
+                    SortOrder = 2
+                });
+            builder.Entity<Category>().HasData(
+                new Category
+                {
+					Id = 3,
+                    Name = "Shoes",
+                    Description = "Shoes",
+                    IsShowOnHome = true,
+                    SortOrder = 3
+                });
+
+            builder.Entity<Category>().HasData(
+                new Category
+                {
+					Id = 4,
+                    Name = "Watches",
+                    Description = "Watches",
+                    IsShowOnHome = true,
+                    SortOrder = 4
+                });
+            #endregion
+        }
+
+        public override int SaveChanges()
 		{
 			UpdateEntityState();
 			return base.SaveChanges();

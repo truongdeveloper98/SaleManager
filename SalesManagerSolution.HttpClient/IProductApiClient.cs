@@ -18,14 +18,15 @@ namespace SalesManagerSolution.HttpClient
 
         Task<bool> UpdateProduct(ProductCreateViewModel request);
 
-        //Task<ApiResult<bool>> CategoryAssign(int id, CategoryAssignRequest request);
+        Task<ApiResult<bool>> CategoryAssign(int id, CategoryAssignRequest request);
 
         Task<ProductViewModel> GetById(int id);
 
-        Task<List<ProductViewModel>> GetFeaturedProducts(string languageId, int take);
+        Task<List<ProductViewModel>> GetFeaturedProducts(int take);
 
-        Task<List<ProductViewModel>> GetLatestProducts(string languageId, int take);
+        Task<List<ProductViewModel>> GetLatestProducts(int take);
 
         Task<bool> DeleteProduct(int id);
+
     }
 }

@@ -51,9 +51,9 @@ namespace SalesManagerSolution.HttpClient
         public async Task<List<T>> GetListAsync<T>(string url, bool requiredLogin = false)
         {
             var sessions = _httpContextAccessor
-               .HttpContext
-               .Session
-               .GetString(SystemConstants.AppSettings.Token);
+                 .HttpContext
+                 .Request
+                 .Cookies[SystemConstants.AppSettings.Token];
             var client = _httpClientFactory.CreateClient();
             client.BaseAddress = new Uri(_configuration[SystemConstants.AppSettings.BaseAddress]);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
@@ -71,9 +71,9 @@ namespace SalesManagerSolution.HttpClient
         public async Task<bool> Delete(string url)
         {
             var sessions = _httpContextAccessor
-               .HttpContext
-               .Session
-               .GetString(SystemConstants.AppSettings.Token);
+                  .HttpContext
+                  .Request
+                  .Cookies[SystemConstants.AppSettings.Token];
             var client = _httpClientFactory.CreateClient();
             client.BaseAddress = new Uri(_configuration[SystemConstants.AppSettings.BaseAddress]);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);

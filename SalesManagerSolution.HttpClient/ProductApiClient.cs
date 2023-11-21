@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using SalesManagerSolution.Core.Constants;
 using SalesManagerSolution.Core.ViewModels.Common;
 using SalesManagerSolution.Core.ViewModels.RequestViewModels.Products;
@@ -61,9 +62,55 @@ namespace SalesManagerSolution.HttpClient
             return response.IsSuccessStatusCode;
         }
 
-        public Task<bool> DeleteProduct(int id)
+        public async Task<bool> UpdateProduct(ProductCreateViewModel request)
         {
-            throw new NotImplementedException();
+            var sessions = _httpContextAccessor
+                .HttpContext.Request.Cookies[SystemConstants.AppSettings.Token];
+
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_configuration[SystemConstants.AppSettings.BaseAddress]);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+            var requestContent = new MultipartFormDataContent();
+
+            if (request.ThumbnailImage != null)
+            {
+                byte[] data;
+                using (var br = new BinaryReader(request.ThumbnailImage.OpenReadStream()))
+                {
+                    data = br.ReadBytes((int)request.ThumbnailImage.OpenReadStream().Length);
+                }
+                ByteArrayContent bytes = new ByteArrayContent(data);
+                requestContent.Add(bytes, "thumbnailImage", request.ThumbnailImage.FileName);
+            }
+
+
+            requestContent.Add(new StringContent(string.IsNullOrEmpty(request.Name) ? "" : request.Name.ToString()), "name");
+            requestContent.Add(new StringContent(string.IsNullOrEmpty(request.Description) ? "" : request.Description.ToString()), "description");
+
+            var response = await client.PutAsync($"/api/products/" + request.Id, requestContent);
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<ApiResult<bool>> CategoryAssign(int id, CategoryAssignRequest request)
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+
+            var sessions = _httpContextAccessor
+                .HttpContext.Request.Cookies[SystemConstants.AppSettings.Token];
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+            var json = JsonConvert.SerializeObject(request);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PutAsync($"/api/products/{id}/categories", httpContent);
+            var result = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+                return JsonConvert.DeserializeObject<ApiSuccessResult<bool>>(result);
+
+            return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(result);
         }
 
         public async Task<ProductViewModel> GetById(int id)
@@ -73,14 +120,21 @@ namespace SalesManagerSolution.HttpClient
             return data;
         }
 
-        public Task<List<ProductViewModel>> GetFeaturedProducts(string languageId, int take)
+        public async Task<List<ProductViewModel>> GetFeaturedProducts(int take)
         {
-            throw new NotImplementedException();
+            var data = await GetListAsync<ProductViewModel>($"/api/products/featured/{take}");
+            return data;
         }
 
-        public Task<List<ProductViewModel>> GetLatestProducts(string languageId, int take)
+        public async Task<List<ProductViewModel>> GetLatestProducts(int take)
         {
-            throw new NotImplementedException();
+            var data = await GetListAsync<ProductViewModel>($"/api/products/latest/{take}");
+            return data;
+        }
+
+        public async Task<bool> DeleteProduct(int id)
+        {
+            return await Delete($"/api/products/" + id);
         }
 
         public async Task<PagedResult<ProductViewModel>> GetPagings(ProductPagingViewModel request)
@@ -101,11 +155,6 @@ namespace SalesManagerSolution.HttpClient
             var data = await GetAsync<PagedResult<ProductViewModel>>(url);
 
             return data;
-        }
-
-        public Task<bool> UpdateProduct(ProductCreateViewModel request)
-        {
-            throw new NotImplementedException();
         }
     }
 }
