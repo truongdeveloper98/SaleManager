@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace SalesManagerSolution.WebApp.Controllers
 {
-    public class HomeController : Controller
+	public class HomeController : Controller
     {
 		private readonly ILogger<HomeController> _logger;
 		private readonly IProductApiClient _productApiClient;
@@ -45,5 +45,14 @@ namespace SalesManagerSolution.WebApp.Controllers
 			};
 			return View(viewModel);
         }
-    }
+
+		public async Task<IActionResult> GetById(int productId)
+		{
+			var result = await _productApiClient.GetById(productId);
+
+			return Json(result);
+		}
+
+
+	}
 }

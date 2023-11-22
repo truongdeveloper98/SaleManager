@@ -47,7 +47,8 @@ namespace SalesManagerSolution.WebApi.Controllers
             return Ok();
         }
 
-        [HttpGet("{productId}")]
+        [HttpGet("GetById/{productId}")]
+		[AllowAnonymous]
 		public async Task<IActionResult> GetById(int productId)
 		{
 			var product = await _productService.GetById(productId);

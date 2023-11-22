@@ -102,7 +102,7 @@ namespace SalesManagerSolution.HttpClient
 
         public async Task<ProductViewModel> GetById(int id)
         {
-            var data = await GetAsync<ProductViewModel>($"/api/products/{id}");
+            var data = await GetAsync<ProductViewModel>($"/api/products/GetById/{id}");
 
             return data;
         }

@@ -160,27 +160,34 @@ namespace SalesManagerSolution.Infrastructure.Services.Products
 
 		public async Task<ProductViewModel> GetById(int productId)
 		{
-			var product = await _context.Products
-				                        .Where(x=>x.Id == productId)
-										.Select(product => new ProductViewModel()
-										{
-											Id = product.Id,
-											DateCreated = product.DateCreated,
-											Description = product.Description ,
-											Name = product.Name,
-											OriginalPrice = product.OriginalPrice,
-											Price = product.Price,
-											Stock = product.Stock,
-											ViewCount = product.ViewCount,
-										})
-										.FirstOrDefaultAsync();
+
+			var query = from p in _context.Products
+						join pi in _context.ProductImages on p.Id equals pi.ProductId into ppi
+						from pi in ppi.DefaultIfEmpty()
+						where p.Id == productId
+						select new { p, pi };
+
+			var product = await query
+				                .Select(x => new ProductViewModel()
+				                {
+					                Id = x.p.Id,
+					                Name = x.p.Name,
+					                DateCreated = x.p.DateCreated,
+					                Description = x.p.Description,
+					                OriginalPrice = x.p.OriginalPrice,
+					                Price = x.p.Price,
+					                Stock = x.p.Stock,
+					                ViewCount = x.p.ViewCount,
+					                ThumbnailImage = x.pi.ImagePath
+				                }).FirstOrDefaultAsync();
 
 			return product == null ? new ProductViewModel() : product;
 		}
 
 		public async Task<int> Update(ProductCreateViewModel request)
 		{
-			var product = await GetById(request.Id);
+			var product = await _context.Products
+                                        .FindAsync(request.Id);
 
 			if (product == null) throw new Exception($"Cannot find a product with id: {request.Id}");
 
@@ -189,6 +196,8 @@ namespace SalesManagerSolution.Infrastructure.Services.Products
 			product.Price = request.Price;
 			product.Stock = request.Stock;
 			product.Description = request.Description;
+
+            _context.Products.Update(product);
 
 			if (request.ThumbnailImage != null)
 			{

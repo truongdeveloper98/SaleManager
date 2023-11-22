@@ -129,7 +129,7 @@ namespace SalesManagerSolution.AdminApp.Controllers
 			});
 		}
 
-		[HttpPost]
+		[HttpPost("Delete")]
 		public async Task<IActionResult> Delete(CategoryDeleteRequest request)
 		{
 			if (!ModelState.IsValid)

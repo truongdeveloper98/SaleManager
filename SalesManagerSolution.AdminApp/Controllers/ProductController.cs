@@ -62,14 +62,14 @@ namespace SalesManagerSolution.AdminApp.Controllers
             return View(data);
         }
 
-        [HttpGet]
+        [HttpGet("Create")]
         public IActionResult Create()
         {
             return View();
         }
 
 
-        [HttpPost]
+        [HttpPost("Create")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> Create([FromForm] ProductCreateViewModel request)
         {
@@ -96,14 +96,14 @@ namespace SalesManagerSolution.AdminApp.Controllers
             return Ok(product);
         }
 
-        [HttpGet]
+        [HttpGet("CategoryAssign")]
         public async Task<IActionResult> CategoryAssign(int id)
         {
             var roleAssignRequest = await GetCategoryAssignRequest(id);
             return View(roleAssignRequest);
         }
 
-        [HttpPost]
+        [HttpPost("CategoryAssign")]
         public async Task<IActionResult> CategoryAssign(CategoryAssignRequest request)
         {
             if (!ModelState.IsValid)
@@ -123,11 +123,17 @@ namespace SalesManagerSolution.AdminApp.Controllers
             return View(roleAssignRequest);
         }
 
-        [HttpGet]
+        [HttpGet("Edit")]
         public async Task<IActionResult> Edit(int id)
         {
 
             var product = await _productApiClient.GetById(id);
+
+            if(product is null)
+            {
+                return BadRequest();
+            }
+
             var editVm = new ProductCreateViewModel()
             {
                 Id = product.Id,
@@ -141,7 +147,7 @@ namespace SalesManagerSolution.AdminApp.Controllers
             return View(editVm);
         }
 
-        [HttpPost]
+        [HttpPost("Edit")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> Edit([FromForm] ProductCreateViewModel request)
         {
@@ -185,7 +191,7 @@ namespace SalesManagerSolution.AdminApp.Controllers
             return categoryAssignRequest;
         }
 
-        [HttpGet]
+        [HttpGet("Delete")]
         public IActionResult Delete(int id)
         {
             return View(new ProductDeleteRequest()
@@ -194,7 +200,7 @@ namespace SalesManagerSolution.AdminApp.Controllers
             });
         }
 
-        [HttpPost]
+        [HttpPost("Delete")]
         public async Task<IActionResult> Delete(ProductDeleteRequest request)
         {
             if (!ModelState.IsValid)
