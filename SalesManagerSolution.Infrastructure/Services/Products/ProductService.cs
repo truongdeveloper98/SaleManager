@@ -93,9 +93,20 @@ namespace SalesManagerSolution.Infrastructure.Services.Products
             return "/" + USER_CONTENT_FOLDER_NAME + "/" + fileName;
         }
 
-        public Task<int> Delete(int productId)
+        public async Task<int> Delete(int productId)
 		{
-			throw new NotImplementedException();
+			var product = await _context.Products.FindAsync(productId);
+			if (product == null) throw new Exception($"Cannot find a product: {productId}");
+
+			var images = _context.ProductImages.Where(i => i.ProductId == productId);
+			foreach (var image in images)
+			{
+				await _storageService.DeleteFileAsync(image.ImagePath);
+			}
+
+			_context.Products.Remove(product);
+
+			return await _context.SaveChangesAsync();
 		}
 
 		public async Task<PagedResult<ProductViewModel>> GetAllPaging(ProductPagingViewModel request)
@@ -171,11 +182,24 @@ namespace SalesManagerSolution.Infrastructure.Services.Products
 		{
 			var product = await GetById(request.Id);
 
+			if (product == null) throw new Exception($"Cannot find a product with id: {request.Id}");
+
 			product.Name = request.Name;
 			product.OriginalPrice = request.OriginalPrice;
 			product.Price = request.Price;
 			product.Stock = request.Stock;
 			product.Description = request.Description;
+
+			if (request.ThumbnailImage != null)
+			{
+				var thumbnailImage = await _context.ProductImages.FirstOrDefaultAsync(i => i.IsDefault == true && i.ProductId == request.Id);
+				if (thumbnailImage != null)
+				{
+					thumbnailImage.FileSize = request.ThumbnailImage.Length;
+					thumbnailImage.ImagePath = await this.SaveFile(request.ThumbnailImage);
+					_context.ProductImages.Update(thumbnailImage);
+				}
+			}
 
 			await _context.SaveChangesAsync();
 
@@ -359,8 +383,6 @@ namespace SalesManagerSolution.Infrastructure.Services.Products
                         from pi in ppi.DefaultIfEmpty()
                         join c in _context.Categories on pic.CategoryId equals c.Id into picc
                         from c in picc.DefaultIfEmpty()
-                        where pi == null || pi.IsDefault == true
-                        && p.IsFeatured == true
                         select new { p,  pic, pi };
 
             var data = await query.OrderByDescending(x => x.p.DateCreated).Take(take)

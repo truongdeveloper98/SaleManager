@@ -68,7 +68,34 @@ namespace SalesManagerSolution.HttpClient
             throw new Exception(body);
         }
 
-        public async Task<bool> Delete(string url)
+
+		public async Task<bool> UpdateAsync(string url, MultipartFormDataContent requestContent, bool requiredLogin = false)
+		{
+			var sessions = _httpContextAccessor
+				 .HttpContext
+				 .Request
+				 .Cookies[SystemConstants.AppSettings.Token];
+			var client = _httpClientFactory.CreateClient();
+			client.BaseAddress = new Uri(_configuration[SystemConstants.AppSettings.BaseAddress]);
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+			var response = await client.PutAsync(url, requestContent);
+			return response.IsSuccessStatusCode;
+		}
+
+		public async Task<bool> AddAsync(string url, MultipartFormDataContent requestContent, bool requiredLogin = false)
+		{
+			var sessions = _httpContextAccessor
+				 .HttpContext
+				 .Request
+				 .Cookies[SystemConstants.AppSettings.Token];
+			var client = _httpClientFactory.CreateClient();
+			client.BaseAddress = new Uri(_configuration[SystemConstants.AppSettings.BaseAddress]);
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+			var response = await client.PostAsync(url, requestContent);
+			return response.IsSuccessStatusCode;
+		}
+
+		public async Task<bool> Delete(string url)
         {
             var sessions = _httpContextAccessor
                   .HttpContext

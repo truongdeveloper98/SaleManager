@@ -4,6 +4,7 @@ using SalesManagerSolution.Core.Constants;
 using SalesManagerSolution.Core.Interfaces.Authentications;
 using SalesManagerSolution.Core.Services.Authentications;
 using SalesManagerSolution.Domain.Entities;
+using SalesManagerSolution.HttpClient;
 using SalesManagerSolution.Infrastructure.EntityFramework;
 using SalesManagerSolution.Infrastructure.Services.Authentications;
 
@@ -29,12 +30,15 @@ namespace SalesManagerSolution.WebApp.DI
 						.AddEntityFrameworkStores<ApplicationDbContext>()
 						.AddDefaultTokenProviders();
 
-
+			services.AddHttpClient();
 			services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionsName));
 
 			services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
 
 			services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+			services.AddScoped<IProductApiClient,ProductApiClient>();
+			services.AddScoped<ICategoryApiClient, CategoryApiClient>();
 		}
 	}
 }

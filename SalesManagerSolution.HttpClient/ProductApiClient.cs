@@ -32,13 +32,7 @@ namespace SalesManagerSolution.HttpClient
         }
         public async Task<bool> CreateProduct(ProductCreateViewModel request)
         {
-            var sessions = _httpContextAccessor
-                .HttpContext.Request.Cookies[SystemConstants.AppSettings.Token];
-
-            var client = _httpClientFactory.CreateClient();
-            client.BaseAddress = new Uri(_configuration[SystemConstants.AppSettings.BaseAddress]);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
-
+           
             var requestContent = new MultipartFormDataContent();
 
             if (request.ThumbnailImage != null)
@@ -58,19 +52,12 @@ namespace SalesManagerSolution.HttpClient
             requestContent.Add(new StringContent(string.IsNullOrEmpty(request.Name) ? "" : request.Name.ToString()), "name");
             requestContent.Add(new StringContent(string.IsNullOrEmpty(request.Description) ? "" : request.Description.ToString()), "description");
 
-            var response = await client.PostAsync($"/api/products/", requestContent);
-            return response.IsSuccessStatusCode;
+            var response = await AddAsync($"/api/products/", requestContent);
+            return response;
         }
 
         public async Task<bool> UpdateProduct(ProductCreateViewModel request)
         {
-            var sessions = _httpContextAccessor
-                .HttpContext.Request.Cookies[SystemConstants.AppSettings.Token];
-
-            var client = _httpClientFactory.CreateClient();
-            client.BaseAddress = new Uri(_configuration[SystemConstants.AppSettings.BaseAddress]);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
-
             var requestContent = new MultipartFormDataContent();
 
             if (request.ThumbnailImage != null)
@@ -88,8 +75,8 @@ namespace SalesManagerSolution.HttpClient
             requestContent.Add(new StringContent(string.IsNullOrEmpty(request.Name) ? "" : request.Name.ToString()), "name");
             requestContent.Add(new StringContent(string.IsNullOrEmpty(request.Description) ? "" : request.Description.ToString()), "description");
 
-            var response = await client.PutAsync($"/api/products/" + request.Id, requestContent);
-            return response.IsSuccessStatusCode;
+            var response = await UpdateAsync($"/api/products/" + request.Id, requestContent);
+            return response;
         }
 
         public async Task<ApiResult<bool>> CategoryAssign(int id, CategoryAssignRequest request)

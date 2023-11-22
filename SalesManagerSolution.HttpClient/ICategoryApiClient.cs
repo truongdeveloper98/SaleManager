@@ -1,17 +1,19 @@
-﻿using SalesManagerSolution.Core.ViewModels.ResponseViewModels.Categories;
-using SalesManagerSolution.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SalesManagerSolution.Core.ViewModels.Common;
+using SalesManagerSolution.Core.ViewModels.RequestViewModels.Categories;
+using SalesManagerSolution.Core.ViewModels.ResponseViewModels.Categories;
 
 namespace SalesManagerSolution.HttpClient
 {
     public interface ICategoryApiClient
     {
-        Task<List<CategoryViewModel>> GetAll();
+        Task<PagedResult<CategoryViewModel>> GetAll(PagingRequestBase request);
 
         Task<CategoryViewModel> GetById(int id);
-    }
+
+		Task<bool> CreateCategory(CategoryRequest request);
+
+		Task<bool> UpdateCategory(CategoryRequest request);
+
+        Task<bool> DeleteCategory(int id);
+	}
 }

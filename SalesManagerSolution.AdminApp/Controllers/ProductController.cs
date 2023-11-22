@@ -10,7 +10,8 @@ using SalesManagerSolution.HttpClient;
 
 namespace SalesManagerSolution.AdminApp.Controllers
 {
-	public class ProductController : Controller
+    [Route("[controller]")]
+    public class ProductController : Controller
 	{
         private readonly IProductApiClient _productApiClient;
         private readonly IConfiguration _configuration;
@@ -39,9 +40,15 @@ namespace SalesManagerSolution.AdminApp.Controllers
             var data = await _productApiClient.GetPagings(request);
             ViewBag.Keyword = keyword;
 
-            var categories = await _categoryApiClient.GetAll();
+            var requestBase = new PagingRequestBase()
+            {
+                PageIndex = 1,
+                PageSize = 10
+            };
 
-            ViewBag.Categories = categories.Select(x => new SelectListItem()
+            var categories = await _categoryApiClient.GetAll(requestBase);
+
+            ViewBag.Categories = categories.Items.Select(x => new SelectListItem()
             {
                 Text = x.Name,
                 Value = x.Id.ToString(),
@@ -154,11 +161,19 @@ namespace SalesManagerSolution.AdminApp.Controllers
 
         private async Task<CategoryAssignRequest> GetCategoryAssignRequest(int id)
         {
+            var requestBase = new PagingRequestBase()
+            {
+                PageIndex = 1,
+                PageSize = 10
+            };
 
             var productObj = await _productApiClient.GetById(id);
-            var categories = await _categoryApiClient.GetAll();
+
+            var categories = await _categoryApiClient.GetAll(requestBase);
+
             var categoryAssignRequest = new CategoryAssignRequest();
-            foreach (var role in categories)
+
+            foreach (var role in categories.Items)
             {
                 categoryAssignRequest.Categories.Add(new SelectItem()
                 {

@@ -15,5 +15,10 @@ namespace SalesManagerSolution.Core.Constants
 			public const string TokenUser = "TokenUser";
 			public const string BaseAddress = "BaseAddress";
 		}
+
+		public class ProductSettings
+		{
+			public const int NumberOfFeaturedProducts = 20;
+		}
 	}
 }

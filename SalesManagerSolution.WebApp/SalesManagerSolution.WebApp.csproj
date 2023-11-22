@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SalesManagerSolution.Core\SalesManagerSolution.Core.csproj" />
     <ProjectReference Include="..\SalesManagerSolution.Database\SalesManagerSolution.Database.csproj" />
+    <ProjectReference Include="..\SalesManagerSolution.HttpClient\SalesManagerSolution.HttpClient.csproj" />
     <ProjectReference Include="..\SalesManagerSolution.Infrastructure\SalesManagerSolution.Infrastructure.csproj" />
   </ItemGroup>
 
