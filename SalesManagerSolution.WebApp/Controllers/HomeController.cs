@@ -46,6 +46,16 @@ namespace SalesManagerSolution.WebApp.Controllers
 			return View(viewModel);
         }
 
+		public IActionResult Contact()
+		{
+			return View();
+		}
+
+		public IActionResult About()
+		{
+			return View();
+		}
+
 		public async Task<IActionResult> GetById(int productId)
 		{
 			var result = await _productApiClient.GetById(productId);

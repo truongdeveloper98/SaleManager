@@ -224,7 +224,7 @@ namespace SalesManagerSolution.Infrastructure.Services.Products
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> UpdateStock(int productId, int addedQuantity)
+		public async Task<bool> UpdateStock(int productId, int addedQuantity)
         {
             var product = await _context.Products.FindAsync(productId);
             if (product == null) throw new Exception($"Cannot find a product with id: {productId}");

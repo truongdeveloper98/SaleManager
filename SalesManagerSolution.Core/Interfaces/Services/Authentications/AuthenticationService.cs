@@ -53,7 +53,7 @@ namespace SalesManagerSolution.Core.Services.Authentications
 			// check if user has role
 			if (!adminWeb) //user web
 			{
-				if (roles == null || (!roles.Contains(AuthenticationConstant.RoleApplicant) && !roles.Contains(AuthenticationConstant.RoleTutor) && !roles.Contains(AuthenticationConstant.RoleStaff)))
+				if (roles == null)
 				{
 					throw new WrongRoleException("Your account role is not allowed.");
 				}
@@ -113,7 +113,9 @@ namespace SalesManagerSolution.Core.Services.Authentications
 			{
 				Email = model.Email,
 				UserName = model.Email,
-				PhoneNumber = model.PhoneNumber != default ? model.PhoneNumber : ""
+				PhoneNumber = model.PhoneNumber != default ? model.PhoneNumber : "",
+				FirstName = model.FirstName,
+				LastName = model.LastName
 			};
 
 			// add user to database

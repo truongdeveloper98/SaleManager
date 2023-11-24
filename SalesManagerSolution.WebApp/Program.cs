@@ -4,21 +4,6 @@ using SalesManagerSolution.WebApp.DI;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-	.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
-		options =>
-		{
-			options.LoginPath = new PathString("/Account/Login");
-			options.AccessDeniedPath = new PathString("/Home/Privacy");
-		});
-
-builder.Services.AddSession(options =>
-{
-	options.IdleTimeout = TimeSpan.FromMinutes(30);
-});
 
 builder.Services.ConfigureAppServices(builder.Configuration, builder.Environment.IsProduction());
 
@@ -38,8 +23,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
-app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();

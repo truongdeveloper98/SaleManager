@@ -1,57 +1,40 @@
-﻿
+﻿@using SalesManagerSolution.Core.ViewModels.RequestViewModels.Authentications
+@model LoginRequestViewModel
+
 @{
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	ViewData["Title"] = "Login";
 }
 
-<div class="position-relative z-index-2">
-	<!--begin::Container-->
+<section class="bg0 p-t-104 p-b-116">
 	<div class="container">
-		<!--begin::Card-->
-		<div class="card mt-7" id="card-register" data-kt-scroll-offset="85" style="filter: drop-shadow(0px 0px 40px rgba(68, 81, 96, 0.08))">
-			<!--begin::Card body-->
-			<div class="card-body">
-				<!--begin::Heading-->
-				<div class="text-center mb-5 mb-lg-10">
-					<!--begin::Title-->
-					<h3 class="fs-2hx text-dark mb-5" id="portfolio" data-kt-scroll-offset="{default: 100, lg: 150}">Login</h3>
-					<!--end::Title-->
-				</div>
-				<!--end::Heading-->
-				<!--begin::Tabs content-->
-				<div class="row">
-					<div class="col-md-3"></div>
-					<div class="col-md-6" id="email-content">
-						<form id="login-form">
-							<div class="mb-3">
-								<label  class="form-label">Email</label>
-								<input type="text" class="form-control" id="email"  name="email" placeholder="Enter email" value="@ViewBag.Email">
-							</div>
-                            <div class="mb-3">
-								<label  class="form-label">Password</label>
-								<input type="password" class="form-control" id="password" name="password" a placeholder="Enter password">
-							</div>
-							<div class="row">
-								<div class="col-md-12" align="center">
-									<button id="login-submit" type="button" class="btn btn-primary mt-5" onclick="SubmitLogin()">Login</button>
-								</div>
-							</div>
-						</form>
+			<div class="size-210 bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md">
+			<form asp-action="Login" asp-controller="Account" method="post" class="login100-form validate-form">
+					<h4 class="mtext-105 cl2 txt-center p-b-30">
+						Login 
+					</h4>
 
-						
+					<div class="bor8 m-b-20 how-pos4-parent">
+					<input asp-for="Email" class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" name="email" placeholder="User Name">
 					</div>
-				</div>	
-				<!--end::Tabs content-->
+
+					<div class="bor8 m-b-30">
+					<input asp-for="Password" class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="password" name="password" placeholder="Password">
+					</div>
+
+					<button class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
+						Submit
+					</button>
+					<div class="text-center p-t-115">
+						<span class="txt1">
+							Don’t have an account?
+						</span>
+
+						<a class="txt2" href="/Account/Register">
+							Sign Up
+						</a>
+					</div>
+				</form>
 			</div>
-			<!--end::Card body-->
-		</div>
-		<!--end::Card-->
-					
 	</div>
-	<!--end::Container-->
-</div>
-@section Scripts {
-	<script src="~/js/login.js"></script>
-	<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/additional-methods.js"></script>
-	@*@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}*@
-}
+</section>

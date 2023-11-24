@@ -26,15 +26,14 @@ namespace SalesManagerSolution.WebApp.Controllers
 
 		[HttpGet]
 		[AllowAnonymous]
-		public IActionResult Login(string email)
+		public IActionResult Login()
 		{
-			ViewBag.Email = email;
 			return View();
 		}
 
 		[HttpPost]
 		[AllowAnonymous]
-		public async Task<ActionResult> Login([FromBody] LoginRequestViewModel request)
+		public async Task<ActionResult> Login(LoginRequestViewModel request)
 		{
 			if (!ModelState.IsValid)
 				return View(request);
@@ -43,11 +42,38 @@ namespace SalesManagerSolution.WebApp.Controllers
 			try
 			{
 				var result = await _authenticationService.LoginAsync(request);
-				return Ok("Login successful");
+				return RedirectToAction("Index", "Home");
 			}
 			catch
 			{
 				return BadRequest("Login failed");
+			}
+		}
+
+
+		[HttpGet]
+		[AllowAnonymous]
+		public IActionResult Register()
+		{
+			return View();
+		}
+
+		[HttpPost]
+		[AllowAnonymous]
+		public async Task<ActionResult> Register(RegisterRequestViewModel request)
+		{
+			if (!ModelState.IsValid)
+				return View(request);
+
+			// get token when user login in system
+			try
+			{
+				var result = await _authenticationService.RegisterAsync(request);
+				return RedirectToAction("Login", "Account");
+			}
+			catch
+			{
+				return BadRequest("Register failed");
 			}
 		}
 	}

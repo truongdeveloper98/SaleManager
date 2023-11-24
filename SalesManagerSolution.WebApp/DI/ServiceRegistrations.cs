@@ -1,12 +1,20 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SalesManagerSolution.Core.Constants;
 using SalesManagerSolution.Core.Interfaces.Authentications;
+using SalesManagerSolution.Core.Interfaces.Common;
+using SalesManagerSolution.Core.Interfaces.Services.Carts;
+using SalesManagerSolution.Core.Interfaces.Services.Categories;
+using SalesManagerSolution.Core.Interfaces.Services.Products;
 using SalesManagerSolution.Core.Services.Authentications;
 using SalesManagerSolution.Domain.Entities;
 using SalesManagerSolution.HttpClient;
 using SalesManagerSolution.Infrastructure.EntityFramework;
 using SalesManagerSolution.Infrastructure.Services.Authentications;
+using SalesManagerSolution.Infrastructure.Services.Carts;
+using SalesManagerSolution.Infrastructure.Services.Common;
+using SalesManagerSolution.Infrastructure.Services.Products;
 
 namespace SalesManagerSolution.WebApp.DI
 {
@@ -26,17 +34,20 @@ namespace SalesManagerSolution.WebApp.DI
 							options.UseSqlServer(connectionString));
 			}
 
+			// Add services to the container.
+			services.AddControllersWithViews();
+
 			services.AddIdentity<AppUser, AppRole>()
 						.AddEntityFrameworkStores<ApplicationDbContext>()
 						.AddDefaultTokenProviders();
 
 			services.AddHttpClient();
 			services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionsName));
-
 			services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
-
+			services.AddScoped<IStorageService, FileStorageService>();
+			services.AddScoped<ICartService, CartService>();
 			services.AddScoped<IAuthenticationService, AuthenticationService>();
-
+			services.AddScoped<IProductService, ProductService>();
 			services.AddScoped<IProductApiClient,ProductApiClient>();
 			services.AddScoped<ICategoryApiClient, CategoryApiClient>();
 		}

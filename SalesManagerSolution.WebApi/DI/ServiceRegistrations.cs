@@ -5,12 +5,14 @@ using Microsoft.IdentityModel.Tokens;
 using SalesManagerSolution.Core.Constants;
 using SalesManagerSolution.Core.Interfaces.Authentications;
 using SalesManagerSolution.Core.Interfaces.Common;
+using SalesManagerSolution.Core.Interfaces.Services.Carts;
 using SalesManagerSolution.Core.Interfaces.Services.Categories;
 using SalesManagerSolution.Core.Interfaces.Services.Products;
 using SalesManagerSolution.Core.Services.Authentications;
 using SalesManagerSolution.Domain.Entities;
 using SalesManagerSolution.Infrastructure.EntityFramework;
 using SalesManagerSolution.Infrastructure.Services.Authentications;
+using SalesManagerSolution.Infrastructure.Services.Carts;
 using SalesManagerSolution.Infrastructure.Services.Categories;
 using SalesManagerSolution.Infrastructure.Services.Common;
 using SalesManagerSolution.Infrastructure.Services.Products;
@@ -46,7 +48,8 @@ namespace SalesManagerSolution.WebApi.DI
 			services.AddScoped<IAuthenticationService, AuthenticationService>();
 			services.AddScoped<IProductService, ProductService>();
 			services.AddScoped<ICategoryService, CategoryService>();
-			string issuer = configuration.GetValue<string>("JwtSettings:Issuer") ?? string.Empty;
+            services.AddScoped<ICartService, CartService>();
+            string issuer = configuration.GetValue<string>("JwtSettings:Issuer") ?? string.Empty;
 			string signingKey = configuration.GetValue<string>("JwtSettings:Secret") ?? string.Empty;
 			byte[] signingKeyBytes = System.Text.Encoding.UTF8.GetBytes(signingKey);
 

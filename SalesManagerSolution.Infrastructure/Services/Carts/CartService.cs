@@ -1,17 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SalesManagerSolution.Core.Interfaces.Services.Carts;
-using SalesManagerSolution.Core.ViewModels.Common;
 using SalesManagerSolution.Core.ViewModels.RequestViewModels.Carts;
-using SalesManagerSolution.Core.ViewModels.RequestViewModels.Categories;
 using SalesManagerSolution.Core.ViewModels.ResponseViewModels.Carts;
-using SalesManagerSolution.Core.ViewModels.ResponseViewModels.Categories;
 using SalesManagerSolution.Domain.Entities;
 using SalesManagerSolution.Infrastructure.EntityFramework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SalesManagerSolution.Infrastructure.Services.Carts
 {
@@ -31,7 +23,8 @@ namespace SalesManagerSolution.Infrastructure.Services.Carts
 				Quantity = request.Quantity,
 				ProductId = request.ProductId,
 				Price = request.Price,
-				UserId = request.UserId
+				UserId = request.UserId,
+				IsDeleted = false
 			};
 
 			_context.Carts.Add(cart);
@@ -55,64 +48,70 @@ namespace SalesManagerSolution.Infrastructure.Services.Carts
 			return await _context.SaveChangesAsync();
 		}
 
-		public async Task<PagedResult<CartViewModel>> GetAll()
+		public async Task<List<CartViewModel>> GetAll(int userId)
 		{
 			var query = from c in _context.Carts
-						select new { c };
+						join p in _context.Products on c.ProductId equals p.Id
+						join pi in _context.ProductImages on p.Id equals pi.ProductId
+						where c.UserId == userId && !c.IsDeleted
+						select new { c,p,pi };
 
 			int totalRow = await query.CountAsync();
 
-			var data = await query.Skip((request.PageIndex - 1) * request.PageSize)
-				.Take(request.PageSize)
-				.Select(x => new CategoryViewModel()
-				{
-					Id = x.c.Id,
-					Name = x.c.Name,
-					Description = x.c.Description
-				}).ToListAsync();
-
-			//4. Select and projection
-			var pagedResult = new PagedResult<CategoryViewModel>()
-			{
-				TotalRecords = totalRow,
-				PageSize = request.PageSize,
-				PageIndex = request.PageIndex,
-				Items = data
-			};
-
-			return pagedResult;
+			var data = await query.Select(x => new CartViewModel()
+									{
+										Id = x.c.Id,
+										Price = x.p.Price,
+										ProductName = x.p.Name,
+										Quantity = x.c.Quantity,
+										ThumnailImage = x.pi.ImagePath,
+										SubTotal = x.p.Price * x.c.Quantity
+									}).ToListAsync();
+			return data;
 		}
 
 
 		public async Task<CartViewModel> GetById(int id)
 		{
-			var query = from c in _context.Categories
-						where c.Id == id
-						select new { c };
-			//var result = await query.Select(x => new CartViewModel()
-			//{
-			//	Id = x.c.Id,
-			//	Name = x.c.Name,
-			//	ParentId = x.c.ParentId
-			//}).FirstOrDefaultAsync();
+            var query = from c in _context.Carts
+                        join p in _context.Products on c.ProductId equals p.Id
+						where c.Id == id && !c.IsDeleted
+                        select new { c, p };
 
-			return result ?? new CartViewModel();
+            var result = await query.Select(x => new CartViewModel()
+            {
+                Id = x.c.Id,
+                Price = x.c.Price,
+                ProductName = x.p.Name,
+                Quantity = x.c.Quantity
+            }).FirstOrDefaultAsync();
+
+            return result ?? new CartViewModel();
+		}
+
+		public async Task<Cart> GetCartById(int id)
+		{
+			var cart = await _context.Carts
+									 .Where(x => x.Id == id)
+									 .FirstOrDefaultAsync();
+
+			return cart ?? new Cart();
 		}
 
 		public async Task<int> Update(CartResquestViewModel request)
 		{
 			var cart = await _context.Carts
-										  .Where(x => x.Id == request.Id)
-										  .FirstOrDefaultAsync();
+									 .Where(x => x.Id == request.Id)
+									 .FirstOrDefaultAsync();
 
 			if (cart is null)
 			{
 				throw new Exception($"Cant find cart with Id : {request.Id}");
 			}
 
-			//category.Name = request.Name;
-			//category.Description = request.Description ?? string.Empty;
-			//category.UpdatedAt = DateTime.Now;
+            cart.Price = request.Price;
+            cart.Quantity = request.Quantity;
+            cart.UpdatedAt = DateTime.Now;
 
 			_context.Carts.Update(cart);
 

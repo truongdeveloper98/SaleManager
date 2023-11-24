@@ -3,6 +3,7 @@ using SalesManagerSolution.Core.ViewModels.RequestViewModels.Carts;
 using SalesManagerSolution.Core.ViewModels.RequestViewModels.Categories;
 using SalesManagerSolution.Core.ViewModels.ResponseViewModels.Carts;
 using SalesManagerSolution.Core.ViewModels.ResponseViewModels.Categories;
+using SalesManagerSolution.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,11 @@ namespace SalesManagerSolution.Core.Interfaces.Services.Carts
 {
 	public interface ICartService
 	{
-		Task<PagedResult<CartViewModel>> GetAll();
+		Task<List<CartViewModel>> GetAll(int userId);
 
 		Task<CartViewModel> GetById(int id);
+
+		Task<Cart> GetCartById(int id);
 
 		Task<int> Create(CartResquestViewModel request);
 
