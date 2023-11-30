@@ -1,4 +1,6 @@
-﻿namespace SalesManagerSolution.Domain.Entities
+﻿using SalesManagerSolution.Domain.Enums;
+
+namespace SalesManagerSolution.Domain.Entities
 {
     public class Cart : BaseEntity
     {
@@ -8,6 +10,7 @@
         public int UserId { get; set; }
         public int TestId { get; set; }
         public Product Product { get; set; } = default!;
+        public CartStatus CartStatus { get; set; }
         public DateTime DateCreated { get; set; }
         public AppUser AppUser { get; set; } = default!;
 	}

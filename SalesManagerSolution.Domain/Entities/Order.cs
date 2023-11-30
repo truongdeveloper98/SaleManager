@@ -11,9 +11,7 @@ namespace SalesManagerSolution.Domain.Entities
 		public string ShipEmail { set; get; } = default!;
 		public string ShipPhoneNumber { set; get; } = default!;
 		public OrderStatus Status { set; get; }
-
         public List<OrderDetail> OrderDetails { get; set; } = default!;
-
 		public AppUser AppUser { get; set; } = default!;
 
 

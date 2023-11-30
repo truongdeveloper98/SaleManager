@@ -3,6 +3,7 @@ using SalesManagerSolution.Core.Interfaces.Services.Carts;
 using SalesManagerSolution.Core.ViewModels.RequestViewModels.Carts;
 using SalesManagerSolution.Core.ViewModels.ResponseViewModels.Carts;
 using SalesManagerSolution.Domain.Entities;
+using SalesManagerSolution.Domain.Enums;
 using SalesManagerSolution.Infrastructure.EntityFramework;
 
 namespace SalesManagerSolution.Infrastructure.Services.Carts
@@ -24,6 +25,7 @@ namespace SalesManagerSolution.Infrastructure.Services.Carts
 				ProductId = request.ProductId,
 				Price = request.Price,
 				UserId = request.UserId,
+				CartStatus = CartStatus.NotDone,
 				IsDeleted = false
 			};
 
@@ -53,7 +55,7 @@ namespace SalesManagerSolution.Infrastructure.Services.Carts
 			var query = from c in _context.Carts
 						join p in _context.Products on c.ProductId equals p.Id
 						join pi in _context.ProductImages on p.Id equals pi.ProductId
-						where c.UserId == userId && !c.IsDeleted
+						where c.UserId == userId && !c.IsDeleted && c.CartStatus == CartStatus.NotDone
 						select new { c,p,pi };
 
 			int totalRow = await query.CountAsync();
@@ -64,6 +66,7 @@ namespace SalesManagerSolution.Infrastructure.Services.Carts
 										Price = x.p.Price,
 										ProductName = x.p.Name,
 										Quantity = x.c.Quantity,
+										ProductId = x.c.ProductId,
 										ThumnailImage = x.pi.ImagePath,
 										SubTotal = x.p.Price * x.c.Quantity
 									}).ToListAsync();
@@ -117,5 +120,16 @@ namespace SalesManagerSolution.Infrastructure.Services.Carts
 
 			return await _context.SaveChangesAsync();
 		}
-	}
+
+        public async Task<int> UpdateStatusCart(int id)
+        {
+            var cart = await GetCartById(id);
+
+			cart.CartStatus = CartStatus.Done;
+
+			_context.Carts.Update(cart);
+
+			return await _context.SaveChangesAsync();
+        }
+    }
 }

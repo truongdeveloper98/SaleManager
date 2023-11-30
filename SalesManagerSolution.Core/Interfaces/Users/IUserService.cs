@@ -7,17 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SalesManagerSolution.HttpClient.System.User
+namespace SalesManagerSolution.Core.Interfaces.Users
 {
-	public interface IUserHttpClient
+	public interface IUserService
 	{
-		Task<ApiResult<string>> Authencate(LoginRequestViewModel request);
+		Task<ApiResult<bool>> Register(RegisterRequest request);
 
-		Task<ApiResult<PagedResult<UserVm>>> GetUsersPagings(GetUserPagingRequest request);
+		Task<ApiResult<bool>> Update(int id, UserUpdateRequest request);
 
-		Task<ApiResult<bool>> RegisterUser(RegisterRequest registerRequest);
-
-		Task<ApiResult<bool>> UpdateUser(int id, UserUpdateRequest request);
+		Task<ApiResult<PagedResult<UserVm>>> GetUsersPaging(GetUserPagingRequest request);
 
 		Task<ApiResult<UserVm>> GetById(int id);
 

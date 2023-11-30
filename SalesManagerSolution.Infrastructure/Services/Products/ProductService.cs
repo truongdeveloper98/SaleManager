@@ -119,7 +119,7 @@ namespace SalesManagerSolution.Infrastructure.Services.Products
                         join pi in _context.ProductImages on p.Id equals pi.ProductId into ppi
                         from pi in ppi.DefaultIfEmpty()
                         where pi.IsDefault == true
-                        select new { p, pic, pi };
+                        select new { p, pic, pi,c };
             //2. filter
             if (!string.IsNullOrEmpty(request.Keyword))
                 query = query.Where(x => x.p.Name.Contains(request.Keyword));
@@ -392,7 +392,7 @@ namespace SalesManagerSolution.Infrastructure.Services.Products
                         from pi in ppi.DefaultIfEmpty()
                         join c in _context.Categories on pic.CategoryId equals c.Id into picc
                         from c in picc.DefaultIfEmpty()
-                        select new { p,  pic, pi };
+                        select new { p,  pic, pi,c };
 
             var data = await query.OrderByDescending(x => x.p.DateCreated).Take(take)
                 .Select(x => new ProductViewModel()
@@ -405,8 +405,22 @@ namespace SalesManagerSolution.Infrastructure.Services.Products
                     Price = x.p.Price,
                     Stock = x.p.Stock,
                     ViewCount = x.p.ViewCount,
-                    ThumbnailImage = x.pi.ImagePath
+					ThumbnailImage = x.pi.ImagePath
                 }).ToListAsync();
+
+
+              foreach(var product in data)
+              {
+                var categoryNames = await _context.ProductInCategories
+                                      .Join(_context.Products, pc => pc.ProductId, p => p.Id, (pc, p) => new { pc = pc, p = p })
+                                      .Join(_context.Categories, pc => pc.pc.CategoryId, c => c.Id, (ppc, c) => new { ppc = ppc, c = c })
+                                      .Where(x=>x.ppc.p.Id == product.Id)
+                                      .Select(x => x.c.Name)
+                                      .ToListAsync();
+
+                product.CategoryName = categoryNames == null ? new List<string>() { string.Empty} : categoryNames;
+
+			  }
 
             return data;
         }

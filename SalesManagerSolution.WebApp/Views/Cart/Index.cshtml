@@ -8,13 +8,13 @@
 }
 
 <!-- Shoping Cart -->
-<form class="bg0 p-t-75 p-b-85">
+<div class="bg0 p-t-75 p-b-85">
 	<div class="container">
 		<div class="row">
 			<div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
 				<div class="m-l-25 m-r--38 m-lr-0-xl">
 					<div class="wrap-table-shopping-cart">
-						<table class="table-shopping-cart">
+						<table class="table-shopping-cart" id="table-cart">
 							<tr class="table_head">
 								<th class="column-1">Product</th>
 								<th class="column-2"></th>
@@ -39,20 +39,20 @@
 									<td class="column-3">$ @item.Price</td>
 									<td class="column-4">
 										<div class="wrap-num-product flex-w m-l-auto m-r-0">
-											<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m" id="btn-minus" data-id="@item.Id">
+											<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m btn-minus" data-id="@item.Id">
 												<i class="fs-16 zmdi zmdi-minus" ></i>
 											</div>
 
 											<input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product1" id="product-quantity" value="@item.Quantity">
 
-											<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m" id="btn-plus" data-id="@item.Id">
+											<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m btn-plus" data-id="@item.Id">
 												<i class="fs-16 zmdi zmdi-plus" ></i>
 											</div>
 										</div>
 									</td>
 									<td class="column-5">$ @item.SubTotal </td>
 									<td class="column-6">
-										<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m" id="btn-delete" data-id="@item.Id">
+										<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m btn-delete" data-id="@item.Id">
 											<i class="fa fa-trash" aria-hidden="true" style="font-size : 30px"></i>
 										</div>
 									</td>
@@ -112,28 +112,20 @@
 								</span>
 
 								<div class="rs1-select2 rs2-select2 bor8 bg0 m-b-12 m-t-9">
-									<select class="js-select2" name="time">
-										<option>Select a country...</option>
-										<option>USA</option>
-										<option>UK</option>
-									</select>
-									<div class="dropDownSelect2"></div>
+									<input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="shipping-address" placeholder="Enter address" id="shipping-address">
 								</div>
 
 								<div class="bor8 bg0 m-b-12">
-									<input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="state" placeholder="State /  country">
+									<input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="shipping-name" placeholder="Enter shipping name" id="shipping-name">
 								</div>
 
 								<div class="bor8 bg0 m-b-22">
-									<input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="postcode" placeholder="Postcode / Zip">
+									<input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="shipping-email" placeholder="Enter email" id="shipping-email">
 								</div>
 
-								<div class="flex-w">
-									<div class="flex-c-m stext-101 cl2 size-115 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer">
-										Update Totals
-									</div>
+								<div class="bor8 bg0 m-b-22">
+									<input class="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="shipping-phone" placeholder="Enter phone number" id="shipping-phone">
 								</div>
-
 							</div>
 						</div>
 					</div>
@@ -152,18 +144,18 @@
 						</div>
 					</div>
 
-					<button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+					<button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04" id="btn-checkout">
 						Proceed to Checkout
 					</button>
 				</div>
 			</div>
 		</div>
 	</div>
-</form>
+</div>
 
 @section Scripts{
 	<script>
-		$('#btn-plus').on("click", function () {
+		$('.btn-plus').on("click", function () {
 			var cartId = parseInt($(this).data("id"));
 
 			var addQuantity = true;
@@ -171,7 +163,7 @@
 			updateQuantity(cartId, addQuantity);
 		});
 
-		$('#btn-minus').on("click", function () {
+		$('.btn-minus').on("click", function () {
 			var cartId = parseInt($(this).data("id"));
 
 			var addQuantity = false;
@@ -180,7 +172,7 @@
 		});
 
 
-		$('#btn-delete').on("click", function () {
+		$('.btn-delete').on("click", function () {
 			var cartId = parseInt($(this).data("id"));
 			$.ajax({
 				type: "POST",
@@ -194,6 +186,58 @@
 				},
 				error: function (err) {
 					alert('Delete cart faild!');
+				}
+			});
+		});
+
+		$('#btn-checkout').on("click", function () {
+			var address = $('#shipping-address').val();
+
+			if(address === undefined || address === ''){
+				alert('Please input address');
+				return;
+			}
+
+			var name = $('#shipping-name').val();
+
+			if (name === undefined || name === '') {
+				alert('Please input name');
+				return;
+			}
+
+			var email = $('#shipping-email').val();
+
+			if (email === undefined || email === '') {
+				alert('Please input email');
+				return;
+			}
+
+			var phone = $('#shipping-phone').val();
+
+			if (phone === undefined || phone === '') {
+				alert('Please input phone number');
+				return;
+			}
+
+			var request = {
+				ShipName : name,
+				ShipAddress : address,
+				ShipEmail : email,
+				ShipPhoneNumber : phone
+			}
+
+			$.ajax({
+				type: "POST",
+				url: '@Url.Content("~/Order/Create/")',
+				data: { request : request },
+				success: function (res) {
+					alert('check out successfully!');
+					href = '@Url.Action("Index", "Home")'
+					href = href.replace(/&amp;/g, '&');
+					window.location = href;
+				},
+				error: function (err) {
+					alert('check out faild!');
 				}
 			});
 		});

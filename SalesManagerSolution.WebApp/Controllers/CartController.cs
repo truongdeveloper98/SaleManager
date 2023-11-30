@@ -70,7 +70,7 @@ namespace SalesManagerSolution.WebApp.Controllers
 
 				if (!userInfomation.IsAuthenticated)
 				{
-				   return RedirectToAction("Login", "Account");
+				   return BadRequest("Please login");
 			    }
 
 				var userId = Convert.ToInt32(this.ControllerContext.HttpContext.User.Claims.ToList()[0].Value);
@@ -133,7 +133,7 @@ namespace SalesManagerSolution.WebApp.Controllers
 
 			var result = await _cartService.Update(cartReques);
 
-			await _productService.UpdateStock(request.Id, quantity);
+			await _productService.UpdateStock(request.Id, quantityProduct);
 
 			if (result > 0)
 			{
@@ -147,55 +147,14 @@ namespace SalesManagerSolution.WebApp.Controllers
 
 
 		[HttpGet("{cartId}")]
-			public async Task<IActionResult> GetById(int cartId)
-			{
-				var Cart = await _cartService.GetById(cartId);
-				if (Cart == null)
-					return BadRequest("Cannot find Cart");
-				return Ok(Cart);
-			}
+		public async Task<IActionResult> GetById(int cartId)
+		{
+			var Cart = await _cartService.GetById(cartId);
+			if (Cart == null)
+				return BadRequest("Cannot find Cart");
+			return Ok(Cart);
+		}
 
-
-			[HttpGet("Edit")]
-			public async Task<IActionResult> Edit(int id)
-			{
-
-				//var Cart = await _cartApiClient.GetById(id);
-				//var editVm = new CartViewModel()
-				//{
-				//	Id = Cart.Id,
-				//	Description = Cart.Description,
-				//	Name = Cart.Name
-				//};
-				return View();
-			}
-
-		//[HttpPost("Edit")]
-		//[Consumes("multipart/form-data")]
-		//public async Task<IActionResult> Edit([FromForm] CartRequest request)
-		//{
-		//	if (!ModelState.IsValid)
-		//		return View(request);
-
-		//	var result = await _CartApiClient.UpdateCart(request);
-		//	if (result)
-		//	{
-		//		TempData["result"] = "Cập nhật danh mục thành công";
-		//		return RedirectToAction("Index");
-		//	}
-
-		//	ModelState.AddModelError("", "Cập nhật danh mục thất bại");
-		//	return View(request);
-		//}
-
-		//[HttpGet("Delete")]
-		//public IActionResult Delete(int id)
-		//{
-		//	return View(new CartDeleteRequest()
-		//	{
-		//		Id = id
-		//	});
-		//}
 
 		[HttpPost("Delete")]
 		public async Task<IActionResult> Delete(int cartId)
@@ -208,10 +167,13 @@ namespace SalesManagerSolution.WebApp.Controllers
 				Id = cartId,
 			};
 
+			var cart = await _cartService.GetCartById(cartId);
+
+			await _productService.UpdateStock(cart.ProductId, cart.Quantity);
+
 			var result = await _cartService.Delete(model);
 			if (result > 0)
 			{
-				TempData["result"] = "Xóa danh mục thành công";
 				return RedirectToAction("Index");
 			}
 

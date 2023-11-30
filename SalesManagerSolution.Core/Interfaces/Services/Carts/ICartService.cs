@@ -25,5 +25,7 @@ namespace SalesManagerSolution.Core.Interfaces.Services.Carts
 		Task<int> Update(CartResquestViewModel request);
 
 		Task<int> Delete(DeleteCartRequest request);
-	}
+
+        Task<int> UpdateStatusCart(int id);
+    }
 }

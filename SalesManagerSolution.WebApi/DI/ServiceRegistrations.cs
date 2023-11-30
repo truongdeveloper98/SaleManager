@@ -5,9 +5,12 @@ using Microsoft.IdentityModel.Tokens;
 using SalesManagerSolution.Core.Constants;
 using SalesManagerSolution.Core.Interfaces.Authentications;
 using SalesManagerSolution.Core.Interfaces.Common;
+using SalesManagerSolution.Core.Interfaces.Orders;
+using SalesManagerSolution.Core.Interfaces.Roles;
 using SalesManagerSolution.Core.Interfaces.Services.Carts;
 using SalesManagerSolution.Core.Interfaces.Services.Categories;
 using SalesManagerSolution.Core.Interfaces.Services.Products;
+using SalesManagerSolution.Core.Interfaces.Users;
 using SalesManagerSolution.Core.Services.Authentications;
 using SalesManagerSolution.Domain.Entities;
 using SalesManagerSolution.Infrastructure.EntityFramework;
@@ -15,7 +18,10 @@ using SalesManagerSolution.Infrastructure.Services.Authentications;
 using SalesManagerSolution.Infrastructure.Services.Carts;
 using SalesManagerSolution.Infrastructure.Services.Categories;
 using SalesManagerSolution.Infrastructure.Services.Common;
+using SalesManagerSolution.Infrastructure.Services.Orders;
 using SalesManagerSolution.Infrastructure.Services.Products;
+using SalesManagerSolution.Infrastructure.Services.Roles;
+using SalesManagerSolution.Infrastructure.Services.Users;
 
 namespace SalesManagerSolution.WebApi.DI
 {
@@ -49,6 +55,9 @@ namespace SalesManagerSolution.WebApi.DI
 			services.AddScoped<IProductService, ProductService>();
 			services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ICartService, CartService>();
+			services.AddScoped<IUserService, UserService>();
+			services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IOrderService, OrderService>();
             string issuer = configuration.GetValue<string>("JwtSettings:Issuer") ?? string.Empty;
 			string signingKey = configuration.GetValue<string>("JwtSettings:Secret") ?? string.Empty;
 			byte[] signingKeyBytes = System.Text.Encoding.UTF8.GetBytes(signingKey);

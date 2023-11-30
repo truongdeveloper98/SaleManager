@@ -22,6 +22,7 @@ namespace SalesManagerSolution.Core.ViewModels.ResponseViewModels.Products
         public string SeoAlias { get; set; } = default!;
         public bool? IsFeatured { get; set; }
         public string ThumbnailImage { get; set; } = default!;
+        public List<string>? CategoryName { get; set; }
         public List<string> Categories { get; set; } = new List<string>();
     }
 }

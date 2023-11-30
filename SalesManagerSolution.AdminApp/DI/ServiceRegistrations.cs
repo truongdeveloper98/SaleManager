@@ -4,6 +4,7 @@ using SalesManagerSolution.Core.Interfaces.Authentications;
 using SalesManagerSolution.Domain.Entities;
 using SalesManagerSolution.HttpClient.System.User;
 using SalesManagerSolution.HttpClient;
+using SalesManagerSolution.HttpClient.System.Roles;
 
 namespace SalesManagerSolution.AdminApp.DependencyInjections
 {
@@ -28,8 +29,9 @@ namespace SalesManagerSolution.AdminApp.DependencyInjections
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<ICategoryApiClient, CategoryApiClient>();
             services.AddScoped<IUserHttpClient, UserHttpClient>();
-            services.AddScoped<IProductApiClient, ProductApiClient>();
-
+			services.AddScoped<IRoleApiClient, RoleApiClient>();
+			services.AddScoped<IProductApiClient, ProductApiClient>();
+            services.AddScoped<IOrderApiClient, OrderApiClient>();
         }
     }
 }
